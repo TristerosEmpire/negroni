@@ -8,12 +8,12 @@
 `github.com/codegangsta/negroni` -- Github redirigera automatiquement les requêtes vers ce dépôt.
 Nous vous recommandons néanmoins d'utiliser la référence vers ce nouveau dépôt pour plus de clarté.
 
-Negroni approche la question de la création de *middleware* de manière pragmatique.
-La librairie se veut légère, non intrusive et encourage l'utilisation des *Handlers* de
-la librairie standard `net/http`.
+Negroni approche la question de la création de *middlewares* de manière pragmatique.
+La bibliothèque se veut légère, non intrusive et encourage l'utilisation des *Handlers* de
+la bibliothèque standard `net/http`.
 
 Si vous appréciez le projet [Martini](https://github.com/go-martini/martini) et estimez
-qu'une certaine magie s'en dégage, Negroni sera sans doute plus approprié.
+qu'une certaine magie s'en dégage, Negroni sera sans doute plus appropriée.
 
 ## Démarrer avec Negroni
 
@@ -37,7 +37,7 @@ func main() {
     fmt.Fprintf(w, "Welcome to the home page!")
   })
 
-  n := negroni.Classic() // Inclue les "middlewares" par défaut.
+  n := negroni.Classic() // Inclut les "middlewares" par défaut.
   n.UseHandler(mux)
 
   http.ListenAndServe(":3000", n)
@@ -67,14 +67,14 @@ La commande `apt install golang-github-urfave-negroni-dev` vous permettra de l'i
 
 ## Negroni est-il un *framework* ?
 
-Negroni **n'est pas** un *framework*. Considérez le comme une librairie centrée sur
-l'utilisation de *middleware* développés pour fonctionner directement avec la librairie `net/http`.
+Negroni **n'est pas** un *framework*. Considérez le comme une bibliothèque centrée sur
+l'utilisation de *middlewares* développés pour fonctionner directement avec la bibliothèque `net/http`.
 
 ## Redirection (*Routing*) ?
 
-Negroni est *BYOR* (*Bring your own Router*, Apporter votre propre routeur).
+Negroni est *BYOR* (*Bring your own Router*, Apportez votre propre routeur).
 La communauté Go offre un nombre important de routeurs et Negroni met tout en oeuvre
-pour fonctionner avec chacun d'entre eux en assurant un support complet de la librairie `net/http`.
+pour fonctionner avec chacun d'entre eux en assurant un support complet de la bibliothèque `net/http`.
 Par exemple, une utilisation avec [Gorilla Mux] se présente sous la forme:
 
 ``` go
@@ -97,7 +97,7 @@ des applications:
 
 * [`negroni.Recovery`](#recovery) - Récupère des appels à `panic`.
 * [`negroni.Logger`](#logger) - Journalise les requêtes et les réponses.
-* [`negroni.Static`](#static) - Sers les fichiers statiques présents dans le dossier "public".
+* [`negroni.Static`](#static) - Sert les fichiers statiques présents dans le dossier "public".
 
 Elle offre un démarrage aisé sans recourir à la configuration pour utiliser quelques-unes des fonctions les plus utiles de Negroni.
 
@@ -111,7 +111,7 @@ type Handler interface {
 }
 ```
 
-Si un *middleware* n'a pas écrit au `ResponseWriter`, il doit faire appel au prochain `http.Handlerfunc` de la chaîne pour que le prochain *middleware* soit appelé:
+Si un *middleware* n'a pas écrit sur le `ResponseWriter`, il doit faire appel au prochain `http.Handlerfunc` de la chaîne pour que le prochain *middleware* soit appelé:
 
 ``` go
 func MyMiddleware(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
@@ -128,7 +128,7 @@ n := negroni.New()
 n.Use(negroni.HandlerFunc(MyMiddleware))
 ```
 
-Vous pour également utiliser un `http.Handler` classique:
+Vous pouvez également utiliser le bon vieux classique `http.Handler` :
 
 ``` go
 n := negroni.New()
@@ -147,13 +147,13 @@ La méthode `With()` vous permet de regrouper un ou plusieurs `Handler` au sein
 d'une nouvelle instance `Negroni`. Cette dernière est la combinaison des `Handlers` de l'ancienne et de la nouvelle instance.
 
 ```go
-// "middleware" à réutiliser.
+// "middleware" que l'on souhaite réutiliser.
 common := negroni.New()
 common.Use(MyMiddleware1)
 common.Use(MyMiddleware2)
 
-// `specific` devient une nouvelle instance avec les "handlers" provenant de `common` ainsi
-// que ceux passés en paramètres.
+// `specific` devient une nouvelle instance negroni contenant les "handlers" provenant de `common` combinés à
+// ceux passés en paramètre.
 specific := common.With(
 	SpecificMiddleware1,
 	SpecificMiddleware2
@@ -183,7 +183,7 @@ Si cette dernière n'est pas définie, l'adresse par défaut est utilisée.
 Pour une description détaillée, veuillez-vous référer à la documentation de la méthode
 [Run]((https://godoc.org/github.com/urfave/negroni#Negroni.Run).
 
-De manière générale, vous voudrez vous servir de la librairie `net/http` et utiliser `negroni`
+De manière générale, vous souhaiterez recourir aux méthodes de `net/http` et utiliser `negroni`
 comme un simple `Handler` pour plus de flexibilité.
 
 Par exemple:
@@ -207,7 +207,7 @@ func main() {
     fmt.Fprintf(w, "Welcome to the home page!")
   })
 
-  n := negroni.Classic() // Inclue les "middlewares" par défaut
+  n := negroni.Classic() // Inclut les "middlewares" par défaut
   n.UseHandler(mux)
 
   s := &http.Server{
@@ -223,7 +223,7 @@ func main() {
 
 ## Redirection spécifique
 
-Si un ensemble de routes nécessite l'appel à des *middleware* spécifiques,
+Si un ensemble de routes nécessite l'exécution de *middlewares* spécifiques,
 vous pouvez simplement créer une nouvelle instance Negroni et l'utiliser comme
 `Handler` pour cet ensemble.
 
@@ -240,7 +240,7 @@ router.PathPrefix("/admin").Handler(negroni.New(
 ))
 ```
 
-Si vous utilisez [Gorilla Mux], vous pourriez utiliser un *subrouter*:
+Si vous utilisez [Gorilla Mux], vous pouvez utiliser un *subrouter*:
 
 ``` go
 router := mux.NewRouter()
@@ -315,7 +315,7 @@ func main() {
     fmt.Fprintf(w, "Welcome to the home page!")
   })
 
-  // Exemple d'usage de la fonction http.FileServer pour avoir un comportement similaire à un
+  // Exemple d'utilisation de la fonction http.FileServer pour avoir un comportement similaire à un
   // serveur HTTP "standard" plutôt que le comportement "middleware"
   // mux.Handle("/public", http.FileServer(http.Dir("/home/public")))
 
@@ -367,7 +367,7 @@ func main() {
 ```
 
 Ce programme renverra une erreur `500 Internal Server Error` à chaque requête reçue.
-Il transmettra à son *logger* associé la trace de la pile d'exécution et affichera cette même trace sur la sortie standard si la valeur `PrintStack` est mise à `true`. (valeur par défaut)
+Il transmettra à son *logger* associé la trace de la pile d'exécution et affichera cette même trace sur la sortie standard si la valeur `PrintStack` est mise à `true` (valeur par défaut).
 
 Exemple avec l'utilisation d'une `PanicHandlerFunc`:
 
@@ -437,8 +437,8 @@ Ce programme affichera un *log* similaire à celui-ci pour chaque requête/répo
 [negroni] 2017-10-04T14:56:25+02:00 | 200 |      378µs | localhost:3004 | GET /
 ```
 
-Il est possible de modifier le format par défaut en utilisant la fonction `SetFormat`.
-Le format est `template` dont les champs associés sont les propriétés de l'objet `LoggerEntry`.
+Il est possible de modifier le formatage par défaut en appelant la fonction `SetFormat`.
+Le formatage est défini à l'aide d'une chaîne de caractère (*template*) composée de champs définis à l'aide des propriétés de la structure `LoggerEntry`.
 
 Par exemple:
 
@@ -446,7 +446,7 @@ Par exemple:
 l.SetFormat("[{{.Status}} {{.Duration}}] - {{.Request.UserAgent}}")
 ```
 
-Ce format proposera un affichage similaire à: `[200 18.263µs] - Go-User-Agent/1.1 `
+Ce formatage proposera un affichage similaire à: `[200 18.263µs] - Go-User-Agent/1.1 `
 
 ## *Middlewares* tiers
 
